@@ -1,3 +1,6 @@
+# Harbor
+[harbor](https://github.com/vmware/harbor) is the enterprise-class registry server for docker distribution.
+
 # harbor-java-client
 Harbor Java Client uses Spring boot and okhttpclient to expose Harbor REST API via HarborJavaClient.
 
@@ -22,10 +25,16 @@ harborClient.logout();
 ~~~
 
 # Implemented Harbor API 
-* post /login
-* get  /log_out
-* get /search
-* get /projects
+
+## Basic
+* Login: post /login
+* Logout: get  /log_out
+* Search: get /search
+* Get Logs: get /logs
+* Get Statistics: get /statistics
+
+## Project
+* Get Projects: get /projects
 * head /projects
 * post /projects
 * put /projects/{project_id}/publicity
@@ -35,15 +44,18 @@ harborClient.logout();
 * delete /projects/{project_id}/members/{user_id}
 * get /projects/{project_id}/members/{user_id}
 * put /projects/{project_id}/members/{user_id}
-* get /statistics
+
+## Users
 * post /users
 * delete /users/{user_id}
-* delete /repositories
+
+## Repositories API
 * get /repositories
 * get /repositories/tags
 * get /repositories/manifests
 * get /repositories/top
-* get /logs
+* delete /repositories
+
 
 # Not implemented Harbor API
 
