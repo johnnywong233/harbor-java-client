@@ -56,15 +56,16 @@ harborClient.logout();
 * Get top repositories:  get /repositories/top
 * Remove repositories :  delete /repositories
 
-
 # Not implemented Harbor API
 
-* get /users
-* put /users/{user_id}
-* put /users/{user_id}/password
-* put /users/{user_id}/sysadmin
+考虑到安全性及方便性，以下API暂时没有实现
 
-# Samples
+* Get Users: get /users
+* Update User: put /users/{user_id}
+* Update Password: put /users/{user_id}/password
+* Upgrade to sysadmin: put /users/{user_id}/sysadmin
+
+# HarborClient详细说明
 创建harborClient对象之后，就可以直接调用需要的函数和harbor交互了。
 
 ### 1.Login
