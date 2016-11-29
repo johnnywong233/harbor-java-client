@@ -3,15 +3,21 @@ Harbor Java Client uses Spring boot and okhttpclient to expose Harbor REST API v
 
 # Usage
 ~~~
-//Constructor
-public HarborClient(String baseUrl) // verifySSL to false 
-public HarborClient(String baseUrl, boolean verifySSL) 
-
+/** Constructor
+ * public HarborClient(String baseUrl) // default verifySSL is false 
+ * public HarborClient(String baseUrl, boolean verifySSL) 
+ **/
+ 
+//1) Creat harbor client
 HarborClient harborClient = new HarborClient(baseUrl);
-// HarborClient harborClient = new HarborClient(baseUrl, true);
 
-//call method
-harborClient.login();
+//2) login
+harborClient.login(username, password);
+
+//3) Call other API
+
+//n) log out
+harborClient.logout();
 
 ~~~
 
