@@ -79,7 +79,7 @@ password | Y  | String | 密码 |
 
 返回值| 类型| 说明|
 ------|-----|----|
-code | Integer | 状态码|
+code | Integer | HTTP状态码|
 
 ### 2.Logout
 
@@ -87,7 +87,7 @@ code | Integer | 状态码|
 
 返回值| 类型| 说明|
 ------|-----|----|
-code | Integer | 状态码|
+code | Integer | HTTP状态码|
 
 ### 3. Basic Search 
 
@@ -141,7 +141,7 @@ projects | List<Project> | 项目列表|
 
 ### 7. Check Projects
 
-	String res = harborClient.checkProject(projectName);
+	HarborResponse res = harborClient.checkProject(projectName);
 	
 参数名 | 是否必填 | 类型 | 说明 |
 ------------ | ------------- | ------------ | ------------
@@ -149,48 +149,48 @@ projectName | N  | String | 项目名 |
 
 返回值| 类型| 说明|
 ------|-----|----|
-res | String | 请求结果状态|
+res | HarborResponse | 请求结果状态(code, message)|
 
 请求结果状态如下：
 
-HTTP Status Code| Reason | 
+HTTP Status Code| Message | 
 ------|-----|
 200|Project name exists|
 401|User need to log in first|
 404|Project name does not exist|
 500|Unexpected internal errors|
-default|Unknown|
+Other|Unknown|
 
 ### 8. Create Projects
 		
 	Project pro=new Project();
 	pro.setName("proname");
 	pro.setPublic(false);
-	String res = harborClient.createProject(pro);	
+	HarborResponse res = harborClient.createProject(pro);	
 参数名 | 是否必填 | 类型 | 说明 |
 ------------ | ------------- | ------------ | ------------
 pro | Y  | Project | 需要创建的项目内容 |
 
 返回值| 类型| 说明|
 ------|-----|----|
-res | String | 请求结果状态|
+res | HarborResponse | 请求结果状态(code, message)|
 
 请求结果状态如下：
 
-HTTP Status Code| Reason | 
+HTTP Status Code| Message | 
 ------|-----|
 201|Project created successfully|
 400|Unsatisfied with constraints of the project creation|
 401|User need to log in first|
 409|Project name already exists|
 500|Unexpected internal errors|
-default|Unknown|
+Other|Unknown|
 
 ### 9. Set Publicity
 	int id = 17;
 	Project project=new Project();
 	project.setPublic(true);
-	String res = harborClient.setPublicity(id, project);	
+	HarborResponse res = harborClient.setPublicity(id, project);	
 参数名 | 是否必填 | 类型 | 说明 |
 ------------ | ------------- | ------------ | ------------
 id | Y  | integer | 项目ID |
@@ -198,11 +198,11 @@ project | Y  | Project | 设置项目是否公开 |
 
 返回值| 类型| 说明|
 ------|-----|----|
-res | String | 请求结果状态|
+res | HarborResponse | 请求结果状态(code, message)|
 
 请求结果状态如下：
 
-HTTP Status Code| Reason | 
+HTTP Status Code| Message | 
 ------|-----|
 200|Updated project publicity status successfully|
 400|Illegal format of provided ID value|
@@ -210,7 +210,7 @@ HTTP Status Code| Reason |
 403|User does not have permission to the project|
 404|Project ID does not exist|
 500|Unexpected internal errors|
-default|Unknown|
+Other|Unknown|
 
 ### 10. Search Logs With Filter
 
@@ -218,7 +218,7 @@ default|Unknown|
 	Log accessLog =new Log();
 	accessLog.setKeywords("create/pull/push/delete/jessia");
 	accessLog.setProjectId(17);
-	Object res = harborClient.filterLog(id, accessLog);
+	List<Log> res = harborClient.filterLog(id, accessLog);
 参数名 | 是否必填 | 类型 | 说明 |
 ------------ | ------------- | ------------ | ------------
 id | Y  | integer | 项目ID |
@@ -226,17 +226,16 @@ accessLog | Y  | Log | 查询内容 |
 
 返回值| 类型| 说明|
 ------|-----|----|
-res | Object | 请求结果状态|
+res | List<Log> | 请求结果状态|
 
-请求结果状态如下：
+如果有异常，会抛出HarborClientException，状态如下：
 
-HTTP Status Code| Reason | 
+(HTTP Status) Code| HarborMessage | 
 ------|-----|
-200|以列表形式返回查找结果|
 400|Illegal format of provided ID value|
 401|User need to log in first|
 500|Unexpected internal errors|
-default|Unknown|
+Other|Unknown|
 
 ### 11.Add Member
 
@@ -246,7 +245,7 @@ default|Unknown|
 	role.add(3);
 	memberConf.setRoles(role);
 	memberConf.setUsername("chufuyuan");
-	Object res = harborClient.addMember(id, memberConf);
+	HarborResponse res = harborClient.addMember(id, memberConf);
 	
 参数名 | 是否必填 | 类型 | 说明 |
 ------------ | ------------- | ------------ | ------------
@@ -255,7 +254,20 @@ memberConf | Y  | MemberConf | 需要添加的成员信息 |
 
 返回值| 类型| 说明|
 ------|-----|----|
-res | Object | 请求结果状态|
+res | HarborResponse | 请求结果状态|
+
+请求结果状态如下：
+
+HTTP Status Code| Message | 
+------|-----|
+200|Role members added to relevant project successfully.|
+400|Illegal format of provided ID value|
+401|User need to log in first|
+403|User does not have permission to the project|
+404|Project ID does not exist|
+500|Unexpected internal errors|
+Other|Unknown|
+
 
 ### 12.Get Role Members With ProjectID
 	List<ProjectMember> projectMembers = harborClient.getProjectMembers(projectId);
@@ -291,7 +303,7 @@ HTTP Status Code| Reason |
 403|User in session does not have permission to the project|
 404|Project ID does not exist|
 500|Unexpected internal errors|
-default|Unknown|
+Other|Unknown|
 	
 ### 14.Get Role Members With Project & User
 
@@ -314,7 +326,7 @@ member | Member | 查询的用户角色信息|
 	role.add(2);
 	memberConf.setRoles(role);
 	memberConf.setUsername("misha");
-	String res = harborClient.updateMember(pid, uid, memberConf);	
+	HarborResponse res = harborClient.updateMember(pid, uid, memberConf);	
 参数名 | 是否必填 | 类型 | 说明 |
 ------------ | ------------- | ------------ | ------------
 pid | Y  | integer | 项目ID |
@@ -323,11 +335,11 @@ memberConf | Y  | MemberConf | 要修改的角色信息 |
 
 返回值| 类型| 说明|
 ------|-----|----|
-res | String | 请求结果状态|
+res | HarborResponse | 请求结果状态|
 	
 请求结果状态如下：
 
-HTTP Status Code| Reason | 
+HTTP Status Code| Message | 
 ------|-----|
 200|Project role members updated successfully|
 400|Illegal format of provided ID value|
@@ -335,7 +347,7 @@ HTTP Status Code| Reason |
 403|User in session does not have permission to the project|
 404|Project ID does not exist|
 500|Unexpected internal errors|
-default|Unknown|
+Other|Unknown|
 
 ### 16.Create User
 	ProjectMember projectMember =new ProjectMember();
@@ -343,7 +355,7 @@ default|Unknown|
 	projectMember.setEmail("YourEmail@xxx");
 	projectMember.setPassword("PassWord");
 	projectMember.setRealname("YourName");
-	String res = harborClient.createUser(projectMember);
+	HarborResponse res = harborClient.createUser(projectMember);
 参数名 | 是否必填 | 类型 | 说明 |
 ------------ | ------------- | ------------ | ------------
 projectMember | Y  | ProjectMember | 创建的用户信息 |
@@ -351,23 +363,23 @@ projectMember | Y  | ProjectMember | 创建的用户信息 |
 
 返回值| 类型| 说明|
 ------|-----|----|
-res | String | 请求结果状态|
+res | HarborResponse | 请求结果状态|
 	
 请求结果状态如下：
 
-HTTP Status Code| Reason | 
+HTTP Status Code| Message | 
 ------|-----|
 200|User created successfully|
 400|Unsatisfied with constraints of the user creation|
 403|User registration can only be used by admin role user when self-registration is off|
 409|username has already been used|
 500|Unexpected internal errors|
-default|Unknown|
+Other|Unknown|
 
 ### 17.Delete User
 
 	int userId = 1;
-	String res = harborClient.deleteUser(userId);
+	HarborResponse res = harborClient.deleteUser(userId);
 
 参数名 | 是否必填 | 类型 | 说明 |
 ------------ | ------------- | ------------ | ------------
@@ -376,11 +388,11 @@ userId | Y  | String | 要删除的用户ID |
 
 返回值| 类型| 说明|
 ------|-----|----|
-res | String | 请求结果状态|
+res | HarborResponse | 请求结果状态|
 	
 请求结果状态如下：
 
-HTTP Status Code| Reason | 
+HTTP Status Code| Message | 
 ------|-----|
 200|Marked user as be removed successfully|
 400|Invalid user ID|
@@ -388,7 +400,7 @@ HTTP Status Code| Reason |
 403|User does not have permission of admin role|
 404|User ID does not exist|
 500|Unexpected internal errors|
-default|Unknown|
+Other|Unknown|
 
 ### 18.Get Repositories
 	List<String> res = harborClient.getRepositories(projectId, q);
@@ -442,7 +454,7 @@ popRepos | List | 热门仓库列表|
 ### 22.Delete Repositories
 	String repoName = "misha/debian1";
 	String tag =null;
-	String res =  harborClient.deleteRepositories(repoName, tag);
+	HarborResponse res =  harborClient.deleteRepositories(repoName, tag);
 
 参数名 | 是否必填 | 类型 | 说明 |
 ------------ | ------------- | ------------ | ------------
@@ -451,18 +463,18 @@ tag | N  | String | 仓库标签 |
 
 返回值| 类型| 说明|
 ------|-----|----|
-res | String | 请求结果状态|
+res | HarborResponse | 请求结果状态|
 	
 请求结果状态如下：
 
-HTTP Status Code| Reason | 
+HTTP Status Code| Message | 
 ------|-----|
 200|Delete repository or tag successfully|
 400|Invalid repo_name|
 401|Unauthorized|
 403|Forbidden|
 404|Repository or tag not found|
-default|Unknown|
+Other|Unknown|
 
 # Author
 Please contcat Grissom(@grissomsh) and Misha(misha913loki) if you have any issue or comment.
