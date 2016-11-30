@@ -138,7 +138,7 @@ isPublic | N  | Integer | 是否公开 |
 projects | List<Project> | 项目列表|
 
 
-### 7. Get Projects
+### 7. Check Projects
 
 	String res = harborClient.checkProject(projectName);
 	
@@ -161,15 +161,14 @@ HTTP Status Code| Reason |
 default|Unknown|
 
 ### 8. Create Projects
-	String project = "{\n" + "  \"project_id\": 0,\n" + "  \"owner_id\": 0,\n" + "  \"project_name\": \"name\",\n"
-				+ "  \"creation_time\": \"string\",\n" + "  \"update_time\": \"string\",\n" + "  \"deleted\": 0,\n"
-				+ "  \"user_id\": 0,\n" + "  \"owner_name\": \"string\",\n" + "  \"public\": true,\n"
-				+ "  \"togglable\": true,\n" + "  \"current_user_role_id\": 0,\n" + "  \"repo_count\": 0\n" + "}";
-	String res = harborClient.createProject(project);
-	
+		
+	Project pro=new Project();
+	pro.setName("proname");
+	pro.setPublic(false);
+	String res = harborClient.createProject(pro);	
 参数名 | 是否必填 | 类型 | 说明 |
 ------------ | ------------- | ------------ | ------------
-project | Y  | String | 需要创建的项目内容 |
+pro | Y  | Project | 需要创建的项目内容 |
 
 返回值| 类型| 说明|
 ------|-----|----|
@@ -188,13 +187,13 @@ default|Unknown|
 
 ### 9. Set Publicity
 	int id = 17;
-	String project = "{\n" + "  \"public\": false\n" + "}";
-	String res = harborClient.setPublicity(id, project);
-	
+	Project project=new Project();
+	project.setPublic(true);
+	String res = harborClient.setPublicity(id, project);	
 参数名 | 是否必填 | 类型 | 说明 |
 ------------ | ------------- | ------------ | ------------
 id | Y  | integer | 项目ID |
-project | Y  | String | 需要创建的项目内容 |
+project | Y  | Project | 设置项目是否公开 |
 
 返回值| 类型| 说明|
 ------|-----|----|
@@ -215,14 +214,14 @@ default|Unknown|
 ### 10. Search Logs With Filter
 
 	int id = 17;
-	String accessLog = "{\n" + "  \"username\": \"\",\n" + "  \"keywords\": \"create/pull/push/delete/jessia\",\n"
-				+ "  \"project_id\": 17,\n" + "  \"begin_timestamp\": 0,\n" + "  \"end_timestamp\": 0\n" + "}";
+	Log accessLog =new Log();
+	accessLog.setKeywords("create/pull/push/delete/jessia");
+	accessLog.setProjectId(17);
 	Object res = harborClient.filterLog(id, accessLog);
-
 参数名 | 是否必填 | 类型 | 说明 |
 ------------ | ------------- | ------------ | ------------
 id | Y  | integer | 项目ID |
-accessLog | N  | String | 需要创建的项目内容 |
+accessLog | Y  | Log | 查询内容 |
 
 返回值| 类型| 说明|
 ------|-----|----|
@@ -241,13 +240,17 @@ default|Unknown|
 ### 11.Add Member
 
 	int id = 22;
-	String roles = "{\n" + "  \"roles\": [\n" + "    3\n" + "  ],\n" + "  \"username\": \"misha\"\n" + "}";
-	Object res = harborClient.addMember(id, roles);
+	MemberConf memberConf =new MemberConf();
+	List<Integer> role=new ArrayList<>();
+	role.add(3);
+	memberConf.setRoles(role);
+	memberConf.setUsername("chufuyuan");
+	Object res = harborClient.addMember(id, memberConf);
 	
 参数名 | 是否必填 | 类型 | 说明 |
 ------------ | ------------- | ------------ | ------------
 id | Y  | integer | 项目ID |
-roles | N  | String | 需要添加的成员信息 |
+memberConf | Y  | MemberConf | 需要添加的成员信息 |
 
 返回值| 类型| 说明|
 ------|-----|----|
@@ -303,16 +306,19 @@ member | Member | 查询的用户角色信息|
 
 ### 15.Update Member
 
-	int pid = 20;
+	int pid = 17;
 	int uid = 3;
-	String roles = "{\n" + "  \"roles\": [\n" + "    2\n" + "  ],\n" + "  \"username\": \"misha\"\n" + "}";
-	String res = harborClient.updateMember(pid, uid, roles);
-	
+	MemberConf memberConf =new MemberConf();
+	List<Integer> role=new ArrayList<>();
+	role.add(2);
+	memberConf.setRoles(role);
+	memberConf.setUsername("misha");
+	String res = harborClient.updateMember(pid, uid, memberConf);	
 参数名 | 是否必填 | 类型 | 说明 |
 ------------ | ------------- | ------------ | ------------
 pid | Y  | integer | 项目ID |
 uid | Y  | integer | 用户ID |
-roles | Y  | String | 要修改的角色信息 |
+memberConf | Y  | MemberConf | 要修改的角色信息 |
 
 返回值| 类型| 说明|
 ------|-----|----|
@@ -331,12 +337,15 @@ HTTP Status Code| Reason |
 default|Unknown|
 
 ### 16.Create User
-	String user = "{\"username\":\"misha\",\"email\":\"330110@qq.com\",\"password\":\"xxx\",\"realname\":\"misha\"}";
-	String res = harborClient.createUser(user);
-
+	ProjectMember projectMember =new ProjectMember();
+	projectMember.setUsername("misha");	
+	projectMember.setEmail("YourEmail@xxx");
+	projectMember.setPassword("PassWord");
+	projectMember.setRealname("YourName");
+	String res = harborClient.createUser(projectMember);
 参数名 | 是否必填 | 类型 | 说明 |
 ------------ | ------------- | ------------ | ------------
-user | Y  | String | 创建的用户信息 |
+projectMember | Y  | ProjectMember | 创建的用户信息 |
 
 
 返回值| 类型| 说明|

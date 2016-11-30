@@ -25,7 +25,7 @@ public class Project {
 	private Integer projectId;
 	@JsonProperty("owner_id")
 	private Integer ownerId;
-	@JsonProperty("name")
+	@JsonProperty("project_name")
 	private String name;
 	@JsonProperty("creation_time")
 	private String creationTime;
@@ -36,7 +36,7 @@ public class Project {
 	@JsonProperty("owner_name")
 	private String ownerName;
 	@JsonProperty("public")
-	private Integer _public;
+	private Object _public;
 	@JsonProperty("Togglable")
 	private Boolean togglable;
 	@JsonProperty("update_time")
@@ -186,7 +186,7 @@ public class Project {
 	 * @return The _public
 	 */
 	@JsonProperty("public")
-	public Integer getPublic() {
+	public Object getPublic() {
 		return _public;
 	}
 
@@ -196,7 +196,7 @@ public class Project {
 	 *            The public
 	 */
 	@JsonProperty("public")
-	public void setPublic(Integer _public) {
+	public void setPublic(Object _public) {
 		this._public = _public;
 	}
 

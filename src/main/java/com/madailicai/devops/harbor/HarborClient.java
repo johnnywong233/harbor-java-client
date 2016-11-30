@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.madailicai.devops.harbor.model.Log;
 import com.madailicai.devops.harbor.model.Manifest;
 import com.madailicai.devops.harbor.model.Member;
+import com.madailicai.devops.harbor.model.MemberConf;
 import com.madailicai.devops.harbor.model.PopRepo;
 import com.madailicai.devops.harbor.model.Project;
 import com.madailicai.devops.harbor.model.ProjectAndRepoNum;
@@ -73,6 +74,7 @@ public class HarborClient {
 
 	/**
 	 * append '/' to baseUrl if it doesn't end with '/'
+	 * 
 	 * @return
 	 */
 	private String getBaseUrl() {
@@ -472,10 +474,10 @@ public class HarborClient {
 	 * @return
 	 * @throws IOException
 	 */
-	public String createProject(String project) throws IOException {
+	public String createProject(Project project) throws IOException {
 		String res;
 		String url = baseUrl + "projects";
-		RequestBody requestBody = RequestBody.create(JSON, project);
+		RequestBody requestBody = RequestBody.create(JSON, mapper.writeValueAsString(project));
 		Request request = new Request.Builder().url(url).post(requestBody).build();
 		Response response = okhttpClient.newCall(request).execute();
 		logger.debug(String.format(REQUEST_RESPONSE_INFO, request, response));
@@ -514,10 +516,10 @@ public class HarborClient {
 	 * @return
 	 * @throws IOException
 	 */
-	public String setPublicity(int projectId, String project) throws IOException {
+	public String setPublicity(int projectId, Project project) throws IOException {
 		String res;
 		String url = baseUrl + "projects/" + projectId + "/publicity";
-		RequestBody requestBody = RequestBody.create(JSON, project);
+		RequestBody requestBody = RequestBody.create(JSON, mapper.writeValueAsString(project));
 		Request request = new Request.Builder().url(url).put(requestBody).build();
 		Response response = okhttpClient.newCall(request).execute();
 		logger.debug(String.format(REQUEST_RESPONSE_INFO, request, response));
@@ -560,10 +562,10 @@ public class HarborClient {
 	 * @return
 	 * @throws IOException
 	 */
-	public List<Object> filterLog(int projectId, String accessLog) throws IOException {
+	public List<Object> filterLog(int projectId, Log accessLog) throws IOException {
 		List<Object> res = new ArrayList<>();
 		String url = baseUrl + "projects/" + projectId + "/logs/filter";
-		RequestBody requestBody = RequestBody.create(JSON, accessLog);
+		RequestBody requestBody = RequestBody.create(JSON, mapper.writeValueAsString(accessLog));
 		Request request = new Request.Builder().url(url).post(requestBody).build();
 		Response response = okhttpClient.newCall(request).execute();
 		logger.debug(String.format(REQUEST_RESPONSE_INFO, request, response));
@@ -601,10 +603,10 @@ public class HarborClient {
 	 * @return
 	 * @throws IOException
 	 */
-	public String addMember(int projectId, String roles) throws IOException {
+	public String addMember(int projectId, MemberConf roles) throws IOException {
 		String res;
 		String url = baseUrl + "projects/" + projectId + "/members";
-		RequestBody requestBody = RequestBody.create(JSON, roles);
+		RequestBody requestBody = RequestBody.create(JSON, mapper.writeValueAsString(roles));
 		Request request = new Request.Builder().url(url).post(requestBody).build();
 		Response response = okhttpClient.newCall(request).execute();
 		logger.debug(String.format(REQUEST_RESPONSE_INFO, request, response));
@@ -697,10 +699,10 @@ public class HarborClient {
 	 * @return
 	 * @throws IOException
 	 */
-	public String updateMember(int projectId, int userId, String roles) throws IOException {
+	public String updateMember(int projectId, int userId, MemberConf roles) throws IOException {
 		String res;
 		String url = baseUrl + "projects/" + projectId + "/members/" + userId;
-		RequestBody requestBody = RequestBody.create(JSON, roles);
+		RequestBody requestBody = RequestBody.create(JSON, mapper.writeValueAsString(roles));
 		Request request = new Request.Builder().url(url).put(requestBody).build();
 		Response response = okhttpClient.newCall(request).execute();
 		logger.debug(String.format(REQUEST_RESPONSE_INFO, request, response));
@@ -740,10 +742,10 @@ public class HarborClient {
 	 * @return
 	 * @throws IOException
 	 */
-	public String createUser(String user) throws IOException {
+	public String createUser(ProjectMember user) throws IOException {
 		String res;
 		String url = baseUrl + "users";
-		RequestBody requestBody = RequestBody.create(JSON, user);
+		RequestBody requestBody = RequestBody.create(JSON, mapper.writeValueAsString(user));
 		Request request = new Request.Builder().url(url).post(requestBody).build();
 		Response response = okhttpClient.newCall(request).execute();
 		logger.debug(String.format(REQUEST_RESPONSE_INFO, request, response));
