@@ -477,4 +477,4 @@ HTTP Status Code| Message |
 Other|Unknown|
 
 # Author
-Please contcat Grissom(@grissomsh) and Misha(misha913loki) if you have any issue or comment.
+Please contact Grissom(@grissomsh) and Misha(misha913loki) if you have any issue or comment.
