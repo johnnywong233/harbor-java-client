@@ -3,9 +3,9 @@ package com.madailicai.devops.harbor.model;
 /**
  * Created by yangxueying on 2016/11/14.
  */
-public class Response {
+public class HarborResponse {
 	private String code;
-	private Object messages;
+	private String message;
 
 	public String getCode() {
 		return code;
@@ -15,16 +15,17 @@ public class Response {
 		this.code = code;
 	}
 
-	public Object getMessages() {
-		return messages;
+	public String getMessage() {
+		return message;
 	}
 
-	public void setMessages(Object messages) {
-		this.messages = messages;
+	public void setMessage(String message) {
+		this.message = message;
 	}
 
 	@Override
 	public String toString() {
-		return "ResponseDto{" + "code='" + code + '\'' + ", messages=" + messages + '}';
+		return String.format("HarborResponse [code=%s, message=%s]", code, message);
 	}
+
 }
