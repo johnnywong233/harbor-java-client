@@ -465,4 +465,4 @@ HTTP Status Code| Reason |
 default|Unknown|
 
 # Author
-Please concat Grissom(@grissomsh) and Misha(misha913loki) if you have any issue or comment.
+Please contcat Grissom(@grissomsh) and Misha(misha913loki) if you have any issue or comment.
