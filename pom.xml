@@ -17,7 +17,7 @@ by Misha &amp; Grissom</description>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>1.4.2.RELEASE</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 
 	<properties>
@@ -55,7 +55,6 @@ by Misha &amp; Grissom</description>
 			</plugin>
 		</plugins>
 	</build>
-
 
 	<organization>
 		<name>Madailicai.com</name>

@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.madailicai.devops.harbor.model.HarborResponse;
 import com.madailicai.devops.harbor.model.Log;
 import com.madailicai.devops.harbor.model.Manifest;
 import com.madailicai.devops.harbor.model.Member;
@@ -73,6 +74,7 @@ public class HarborClient {
 
 	/**
 	 * append '/' to baseUrl if it doesn't end with '/'
+	 * 
 	 * @return
 	 */
 	private String getBaseUrl() {
@@ -171,12 +173,16 @@ public class HarborClient {
 	 * @return The response includes the project and repository list in a proper
 	 *         display order.
 	 * @throws IOException
+	 * @throws HarborClientException
 	 */
-	public Search search(String q) throws IOException {
+	public Search search(String q) throws IOException, HarborClientException {
 		String url = getBaseUrl() + "search?q=" + q;
 		Request request = new Request.Builder().url(url).get().build();
 		Response response = okhttpClient.newCall(request).execute();
 		logger.debug(String.format(REQUEST_RESPONSE_INFO, request, response));
+		if (response.code() != 200) {
+			throw new HarborClientException(String.valueOf(response.code()), response.message());
+		}
 		return mapper.readValue(response.body().string(), Search.class);
 	}
 
@@ -192,8 +198,9 @@ public class HarborClient {
 	 *            (Public sign for filtering projects)
 	 * @return
 	 * @throws IOException
+	 * @throws HarborClientException
 	 */
-	public List<Project> getProjects(String projectName, String isPublic) throws IOException {
+	public List<Project> getProjects(String projectName, String isPublic) throws IOException, HarborClientException {
 		List<NameValuePair> qparams = new ArrayList<>();
 		qparams.add(new BasicNameValuePair("project_name", projectName));
 		qparams.add(new BasicNameValuePair("is_public", isPublic));
@@ -202,6 +209,9 @@ public class HarborClient {
 		Request request = new Request.Builder().url(url).get().build();
 		Response response = okhttpClient.newCall(request).execute();
 		logger.debug(String.format(REQUEST_RESPONSE_INFO, request, response));
+		if (response.code() != 200) {
+			throw new HarborClientException(String.valueOf(response.code()), response.message());
+		}
 		return mapper.readValue(response.body().string(), new TypeReference<List<Project>>() {
 		});
 	}
@@ -215,12 +225,16 @@ public class HarborClient {
 	 *            [required] (Relevant project ID)
 	 * @return relevant role members
 	 * @throws IOException
+	 * @throws HarborClientException
 	 */
-	public List<ProjectMember> getProjectMembers(int projectId) throws IOException {
+	public List<ProjectMember> getProjectMembers(int projectId) throws IOException, HarborClientException {
 		String url = getBaseUrl() + "projects/" + projectId + "/members/";
 		Request request = new Request.Builder().url(url).get().build();
 		Response response = okhttpClient.newCall(request).execute();
 		logger.debug(String.format(REQUEST_RESPONSE_INFO, request, response));
+		if (response.code() != 200) {
+			throw new HarborClientException(String.valueOf(response.code()), response.message());
+		}
 		return mapper.readValue(response.body().string(), new TypeReference<List<ProjectMember>>() {
 		});
 	}
@@ -237,12 +251,16 @@ public class HarborClient {
 	 *            [required] (Relevant user ID)
 	 * @return role members
 	 * @throws IOException
+	 * @throws HarborClientException
 	 */
-	public Member getRole(int projectId, int userId) throws IOException {
+	public Member getRole(int projectId, int userId) throws IOException, HarborClientException {
 		String url = getBaseUrl() + "projects/" + projectId + "/members/" + userId;
 		Request request = new Request.Builder().url(url).get().build();
 		Response response = okhttpClient.newCall(request).execute();
 		logger.debug(String.format(REQUEST_RESPONSE_INFO, request, response));
+		if (response.code() != 200) {
+			throw new HarborClientException(String.valueOf(response.code()), response.message());
+		}
 		return mapper.readValue(response.body().string(), Member.class);
 	}
 
@@ -255,12 +273,16 @@ public class HarborClient {
 	 *
 	 * @return The projects number and repositories number relevant to the user.
 	 * @throws IOException
+	 * @throws HarborClientException
 	 */
-	public ProjectAndRepoNum getStatistics() throws IOException {
+	public ProjectAndRepoNum getStatistics() throws IOException, HarborClientException {
 		String url = getBaseUrl() + "statistics";
 		Request request = new Request.Builder().url(url).get().build();
 		Response response = okhttpClient.newCall(request).execute();
 		logger.debug(String.format(REQUEST_RESPONSE_INFO, request, response));
+		if (response.code() != 200) {
+			throw new HarborClientException(String.valueOf(response.code()), response.message());
+		}
 		return mapper.readValue(response.body().string(), ProjectAndRepoNum.class);
 	}
 
@@ -276,8 +298,9 @@ public class HarborClient {
 	 *            (Repo name for filtering results)
 	 * @return respositories
 	 * @throws IOException
+	 * @throws HarborClientException
 	 */
-	public List<String> getRepositories(String projectId, String q) throws IOException {
+	public List<String> getRepositories(String projectId, String q) throws IOException, HarborClientException {
 		String url = getBaseUrl() + "repositories?project_id=" + projectId;
 		if (q != null) {
 			url = url + "&q=" + q;
@@ -285,6 +308,9 @@ public class HarborClient {
 		Request request = new Request.Builder().url(url).get().build();
 		Response response = okhttpClient.newCall(request).execute();
 		logger.debug(String.format(REQUEST_RESPONSE_INFO, request, response));
+		if (response.code() != 200) {
+			throw new HarborClientException(String.valueOf(response.code()), response.message());
+		}
 		return mapper.readValue(response.body().string(), new TypeReference<List<String>>() {
 		});
 	}
@@ -298,12 +324,16 @@ public class HarborClient {
 	 *            [required] (Relevant repository name)
 	 * @return RepositorieTags
 	 * @throws IOException
+	 * @throws HarborClientException
 	 */
-	public List<String> getRepositorieTags(String repoName) throws IOException {
+	public List<String> getRepositorieTags(String repoName) throws IOException, HarborClientException {
 		String url = getBaseUrl() + "repositories/tags?repo_name=" + repoName;
 		Request request = new Request.Builder().url(url).get().build();
 		Response response = okhttpClient.newCall(request).execute();
 		logger.debug(String.format(REQUEST_RESPONSE_INFO, request, response));
+		if (response.code() != 200) {
+			throw new HarborClientException(String.valueOf(response.code()), response.message());
+		}
 		return mapper.readValue(response.body().string(), new TypeReference<List<String>>() {
 		});
 	}
@@ -319,12 +349,16 @@ public class HarborClient {
 	 *            [required] (Tag name)
 	 * @return
 	 * @throws IOException
+	 * @throws HarborClientException
 	 */
-	public Manifest getManifest(String repoName, String tag) throws IOException {
+	public Manifest getManifest(String repoName, String tag) throws IOException, HarborClientException {
 		String url = getBaseUrl() + "repositories/manifests?repo_name=" + repoName + "&tag=" + tag;
 		Request request = new Request.Builder().url(url).get().build();
 		Response response = okhttpClient.newCall(request).execute();
 		logger.debug(String.format(REQUEST_RESPONSE_INFO, request, response));
+		if (response.code() != 200) {
+			throw new HarborClientException(String.valueOf(response.code()), response.message());
+		}
 		return mapper.readValue(response.body().string(), Manifest.class);
 	}
 
@@ -338,8 +372,9 @@ public class HarborClient {
 	 *            10 if not provided)
 	 * @return Retrieved top repositories.
 	 * @throws IOException
+	 * @throws HarborClientException
 	 */
-	public List<PopRepo> getTopRepositories(String count) throws IOException {
+	public List<PopRepo> getTopRepositories(String count) throws IOException, HarborClientException {
 		String url = getBaseUrl() + "repositories/top";
 		if (count != null) {
 			url = url + "?count=" + count;
@@ -347,6 +382,9 @@ public class HarborClient {
 		Request request = new Request.Builder().url(url).get().build();
 		Response response = okhttpClient.newCall(request).execute();
 		logger.debug(String.format(REQUEST_RESPONSE_INFO, request, response));
+		if (response.code() != 200) {
+			throw new HarborClientException(String.valueOf(response.code()), response.message());
+		}
 		return mapper.readValue(response.body().string(), new TypeReference<List<PopRepo>>() {
 		});
 	}
@@ -366,8 +404,9 @@ public class HarborClient {
 	 *            (The end time of logs to be shown in unix timestap)
 	 * @return required logs.
 	 * @throws IOException
+	 * @throws HarborClientException
 	 */
-	public List<Log> getLogs(String lines, String startTime, String endTime) throws IOException {
+	public List<Log> getLogs(String lines, String startTime, String endTime) throws IOException, HarborClientException {
 		logger.debug("get logs lines %s, start time %s, end time %s", lines, startTime, endTime);
 		List<NameValuePair> qparams = new ArrayList<>();
 		qparams.add(new BasicNameValuePair("lines", lines));
@@ -378,6 +417,9 @@ public class HarborClient {
 		Request request = new Request.Builder().url(url).get().build();
 		Response response = okhttpClient.newCall(request).execute();
 		logger.debug(String.format(REQUEST_RESPONSE_INFO, request, response));
+		if (response.code() != 200) {
+			throw new HarborClientException(String.valueOf(response.code()), response.message());
+		}
 		return mapper.readValue(response.body().string(), new TypeReference<List<Log>>() {
 		});
 	}
@@ -392,7 +434,8 @@ public class HarborClient {
 	 * @return
 	 * @throws IOException
 	 */
-	public String checkProject(String projectName) throws IOException {
+	public HarborResponse checkProject(String projectName) throws IOException {
+		HarborResponse result = new HarborResponse();
 		String res;
 		String url = baseUrl + "projects?project_name=" + projectName;
 		Request request = new Request.Builder().url(url).head().build();
@@ -415,7 +458,9 @@ public class HarborClient {
 			res = "Unknown.";
 			break;
 		}
-		return res;
+		result.setCode(Integer.toString(response.code()));
+		result.setMessage(res);
+		return result;
 	}
 
 	/**
@@ -430,7 +475,8 @@ public class HarborClient {
 	 * @return
 	 * @throws IOException
 	 */
-	public String deleteRepositories(String repoName, String tag) throws IOException {
+	public HarborResponse deleteRepositories(String repoName, String tag) throws IOException {
+		HarborResponse result = new HarborResponse();
 		String res;
 		String url = baseUrl + "repositories?repo_name=" + repoName;
 		if (tag != null) {
@@ -459,7 +505,9 @@ public class HarborClient {
 			res = "Unknown.";
 			break;
 		}
-		return res;
+		result.setCode(Integer.toString(response.code()));
+		result.setMessage(res);
+		return result;
 	}
 
 	/**
@@ -472,7 +520,8 @@ public class HarborClient {
 	 * @return
 	 * @throws IOException
 	 */
-	public String createProject(String project) throws IOException {
+	public HarborResponse createProject(String project) throws IOException {
+		HarborResponse result = new HarborResponse();
 		String res;
 		String url = baseUrl + "projects";
 		RequestBody requestBody = RequestBody.create(JSON, project);
@@ -499,7 +548,9 @@ public class HarborClient {
 			res = "Unknown.";
 			break;
 		}
-		return res;
+		result.setCode(Integer.toString(response.code()));
+		result.setMessage(res);
+		return result;
 	}
 
 	/**
@@ -514,7 +565,8 @@ public class HarborClient {
 	 * @return
 	 * @throws IOException
 	 */
-	public String setPublicity(int projectId, String project) throws IOException {
+	public HarborResponse setPublicity(int projectId, String project) throws IOException {
+		HarborResponse result = new HarborResponse();
 		String res;
 		String url = baseUrl + "projects/" + projectId + "/publicity";
 		RequestBody requestBody = RequestBody.create(JSON, project);
@@ -544,7 +596,9 @@ public class HarborClient {
 			res = "Unknown.";
 			break;
 		}
-		return res;
+		result.setCode(Integer.toString(response.code()));
+		result.setMessage(res);
+		return result;
 	}
 
 	/**
@@ -558,10 +612,11 @@ public class HarborClient {
 	 * @param accessLog
 	 *            (Search results of access logs)
 	 * @return
+	 * @throws HarborClientException
 	 * @throws IOException
 	 */
-	public List<Object> filterLog(int projectId, String accessLog) throws IOException {
-		List<Object> res = new ArrayList<>();
+	public List<Log> filterLog(int projectId, String accessLog) throws HarborClientException, IOException {
+		List<Log> res = new ArrayList<>();
 		String url = baseUrl + "projects/" + projectId + "/logs/filter";
 		RequestBody requestBody = RequestBody.create(JSON, accessLog);
 		Request request = new Request.Builder().url(url).post(requestBody).build();
@@ -573,17 +628,13 @@ public class HarborClient {
 			});
 			break;
 		case 400:
-			res.add("Illegal format of provided ID value.");
-			break;
+			throw new HarborClientException(String.valueOf(response.code()), "Illegal format of provided ID value.");
 		case 401:
-			res.add("User need to log in first.");
-			break;
+			throw new HarborClientException(String.valueOf(response.code()), "User need to log in first.");
 		case 500:
-			res.add("Unexpected internal errors.");
-			break;
+			throw new HarborClientException(String.valueOf(response.code()), "Unexpected internal errors.");
 		default:
-			res.add("Unknown.");
-			break;
+			throw new HarborClientException(String.valueOf(response.code()), "Unknown.");
 		}
 		return res;
 	}
@@ -601,7 +652,8 @@ public class HarborClient {
 	 * @return
 	 * @throws IOException
 	 */
-	public String addMember(int projectId, String roles) throws IOException {
+	public HarborResponse addMember(int projectId, String roles) throws IOException {
+		HarborResponse result = new HarborResponse();
 		String res;
 		String url = baseUrl + "projects/" + projectId + "/members";
 		RequestBody requestBody = RequestBody.create(JSON, roles);
@@ -634,7 +686,9 @@ public class HarborClient {
 			res = "Unknown.";
 			break;
 		}
-		return res;
+		result.setCode(Integer.toString(response.code()));
+		result.setMessage(res);
+		return result;
 	}
 
 	/**
@@ -650,7 +704,8 @@ public class HarborClient {
 	 * @return
 	 * @throws IOException
 	 */
-	public String deleteMember(int projectId, int userId) throws IOException {
+	public HarborResponse deleteMember(int projectId, int userId) throws IOException {
+		HarborResponse result = new HarborResponse();
 		String res;
 		String url = baseUrl + "projects/" + projectId + "/members/" + userId;
 		Request request = new Request.Builder().url(url).delete().build();
@@ -679,7 +734,9 @@ public class HarborClient {
 			res = "Unknown.";
 			break;
 		}
-		return res;
+		result.setCode(Integer.toString(response.code()));
+		result.setMessage(res);
+		return result;
 	}
 
 	/**
@@ -697,7 +754,8 @@ public class HarborClient {
 	 * @return
 	 * @throws IOException
 	 */
-	public String updateMember(int projectId, int userId, String roles) throws IOException {
+	public HarborResponse updateMember(int projectId, int userId, String roles) throws IOException {
+		HarborResponse result = new HarborResponse();
 		String res;
 		String url = baseUrl + "projects/" + projectId + "/members/" + userId;
 		RequestBody requestBody = RequestBody.create(JSON, roles);
@@ -727,7 +785,9 @@ public class HarborClient {
 			res = "Unknown.";
 			break;
 		}
-		return res;
+		result.setCode(Integer.toString(response.code()));
+		result.setMessage(res);
+		return result;
 	}
 
 	/**
@@ -740,7 +800,8 @@ public class HarborClient {
 	 * @return
 	 * @throws IOException
 	 */
-	public String createUser(String user) throws IOException {
+	public HarborResponse createUser(String user) throws IOException {
+		HarborResponse result = new HarborResponse();
 		String res;
 		String url = baseUrl + "users";
 		RequestBody requestBody = RequestBody.create(JSON, user);
@@ -767,7 +828,9 @@ public class HarborClient {
 			res = "Unknown.";
 			break;
 		}
-		return res;
+		result.setCode(Integer.toString(response.code()));
+		result.setMessage(res);
+		return result;
 	}
 
 	/**
@@ -781,7 +844,8 @@ public class HarborClient {
 	 * @return
 	 * @throws IOException
 	 */
-	public String deleteUser(int userId) throws IOException {
+	public HarborResponse deleteUser(int userId) throws IOException {
+		HarborResponse result = new HarborResponse();
 		String res;
 		String url = baseUrl + "users/" + userId;
 		Request request = new Request.Builder().url(url).delete().build();
@@ -810,7 +874,9 @@ public class HarborClient {
 			res = "Unknown.";
 			break;
 		}
-		return res;
+		result.setCode(Integer.toString(response.code()));
+		result.setMessage(res);
+		return result;
 	}
 
 }
